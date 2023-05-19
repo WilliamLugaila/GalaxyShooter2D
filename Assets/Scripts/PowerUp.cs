@@ -30,6 +30,7 @@ public class PowerUp : MonoBehaviour
     {
         if (other.tag == "Player")
         {
+            Debug.Log("BPower Ups");
             Player player = other.transform.GetComponent<Player>();
             switch(powerupID)
             {
