@@ -24,10 +24,11 @@ public class UIManager : MonoBehaviour
         //_liveSprites[CurrentPlayerLives = 3];
         _scoreText.text = "score:" + 0;
         _gameOverText.gameObject.SetActive(false);
-        _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
+        _restartText.gameObject.SetActive(false);
+       // _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         if (_gameManager == null)
         {
-            Debug.LogError("GameManager is NULL.");
+            
         }
     }
     public void UpdateScore(int playerScore)
@@ -48,7 +49,8 @@ public class UIManager : MonoBehaviour
     }
     void GameOverSequence()
     {
-        _gameManager.GameOver();
+        Debug.LogError("Game Over.");
+        //_gameManager.GameOver();
         _gameOverText.gameObject.SetActive(true);
         _restartText.gameObject.SetActive(true);
         StartCoroutine(GameOverFlickerRoutine());
