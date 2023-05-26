@@ -7,12 +7,22 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float _speed = 4.0f;
     private Player _player;
+    [SerializeField]
+    private Animator _anim;
+
 
     // Start is called before the first frame update
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
+        if (_player == null)
+        {
+            Debug.LogError("The Player is Null");
+        }
+        
     }
+
+
 
     // Update is called once per frame
     void Update()
@@ -39,7 +49,9 @@ public class Enemy : MonoBehaviour
         {
             
             other.transform.GetComponent<Player>().Damage();
-            Destroy(this.gameObject);
+            _anim.SetTrigger("OnEnemyDeath");
+
+            Destroy(this.gameObject, 2.8f);
             
         }
 
@@ -53,7 +65,8 @@ public class Enemy : MonoBehaviour
                 _player.Addscore();
             }
             //add 10 to score
-            Destroy(this.gameObject);
+            _anim.SetTrigger("OnEnemyDeath");
+            Destroy(this.gameObject, 2.8f);
         }
         //method to add 10 to score!
         //communicate with UI to update the score!
