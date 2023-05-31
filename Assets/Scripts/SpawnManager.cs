@@ -17,8 +17,7 @@ public class SpawnManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnRoutine());
-        StartCoroutine(SpawnPowerupRoutine());
+       
     }
 
     // Update is called once per frame
@@ -49,6 +48,12 @@ public class SpawnManager : MonoBehaviour
             Instantiate(powerups[randomPowerUp], posToSpawn, Quaternion.identity);
             yield return new WaitForSeconds(5.0f);
                 }
+    }
+    public void StartSpawning()
+    {
+        Debug.Log("Start Spawning");
+        StartCoroutine(SpawnRoutine());
+        StartCoroutine(SpawnPowerupRoutine());
     }
     public void OnPlayerDeath()
     {
