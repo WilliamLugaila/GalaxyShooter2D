@@ -9,12 +9,15 @@ public class Enemy : MonoBehaviour
     private Player _player;
     [SerializeField]
     private Animator _anim;
+    private AudioSource _audioSource;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
+        _audioSource = GetComponent<AudioSource>();
         if (_player == null)
         {
             Debug.LogError("The Player is Null");
@@ -52,12 +55,12 @@ public class Enemy : MonoBehaviour
             _anim.SetTrigger("OnEnemyDeath");
 
             Destroy(this.gameObject, 2.8f);
-            
+            _audioSource.Play();
         }
 
         if (other.tag == "Laser")
         {
-            Debug.Log("enemy Hit");
+
             Destroy(other.gameObject);
            
             if(_player != null)
@@ -66,7 +69,9 @@ public class Enemy : MonoBehaviour
             }
             //add 10 to score
             _anim.SetTrigger("OnEnemyDeath");
+            _audioSource.Play();
             Destroy(this.gameObject, 2.8f);
+
         }
         //method to add 10 to score!
         //communicate with UI to update the score!

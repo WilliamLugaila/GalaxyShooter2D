@@ -29,7 +29,7 @@ public class SpawnManager : MonoBehaviour
     //Create a coroutine of type IENumerator
     IEnumerator SpawnRoutine()
     {
-        
+        yield return new WaitForSeconds(3.0f);
         while (_StopSpawning == false) 
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7,0);
@@ -41,6 +41,7 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnPowerupRoutine()
     {
+        yield return new WaitForSeconds(3.0f);
         while (_StopSpawning == false) 
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);

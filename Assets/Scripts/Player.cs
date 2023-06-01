@@ -30,9 +30,16 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _shieldVisualizer;
     [SerializeField]
+    private GameObject _rightEngine, _leftEngine;
+
+    [SerializeField]
     private int _score;
 
     private UIManager _uiManager;
+    [SerializeField]
+    private AudioClip _LaserSoundClip;
+    [SerializeField]
+    private AudioSource _audioSource;
     private float horizontalInput; // move left right
     private float verticalInput; // move up and down
 
@@ -42,13 +49,20 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _audioSource = GetComponent<AudioSource>();
         if (_spawnManager == null)
             Debug.LogError("The Spawn Manager is Null");
-        //_spawnManager.OnPlayerDeath
+            
 
         if (_uiManager == null)
         {
             Debug.LogError("The UI Manager is Null");
+        }
+        if (_audioSource == null)
+            Debug.LogError("AudioSource on the player is null!");
+        else
+        {
+            _audioSource.clip = _LaserSoundClip;
         }
 
     }
@@ -76,7 +90,7 @@ public class Player : MonoBehaviour
             {
                 Instantiate(_LaserPrefab, transform.position, Quaternion.identity);
             }
-
+            _audioSource.Play();
 
         }
     }
@@ -110,6 +124,14 @@ public class Player : MonoBehaviour
         }
 
         _lives -= 1;
+        if (_lives == 2)
+            {
+            _leftEngine.SetActive(true);
+        }
+        else if (_lives == 1)
+        {
+            _rightEngine.SetActive(true);
+        }
         _uiManager.UpdateLives(_lives);
 
         if (_lives < 1)
