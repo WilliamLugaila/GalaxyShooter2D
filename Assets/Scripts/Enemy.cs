@@ -6,10 +6,15 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 4.0f;
+    [SerializeField]
+    private GameObject _laserPrefab;
     private Player _player;
     [SerializeField]
     private Animator _anim;
     private AudioSource _audioSource;
+
+    private float _fireRate = 3.0f;
+    private float _canFire = -1;
 
 
 
@@ -30,18 +35,32 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        CalculateMovement();
+
+        if (Time.time > _canFire)
+        {
+            _fireRate = Random.Range(3f, 7f);
+            _canFire = Time.time + _fireRate;
+            Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+            Debug.Break();
+
+        }
+
+
+    }
+
+    void CalculateMovement()
+    {
         //Move down 4 meters per second
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
         //if bottom of screen
         //respawn at top with new random x position
         if (transform.position.y < -5f)
         {
-                float randomX = Random.Range(-8f, 8f);
-                transform.position = new Vector3(randomX, 7,0);
+            float randomX = Random.Range(-8f, 8f);
+            transform.position = new Vector3(randomX, 7, 0);
 
         }
-                
-        
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -54,7 +73,7 @@ public class Enemy : MonoBehaviour
             other.transform.GetComponent<Player>().Damage();
             _anim.SetTrigger("OnEnemyDeath");
 
-            Destroy(this.gameObject, 2.5f);
+            Destroy(this.gameObject, 2.0f);
             _audioSource.Play();
         }
 
@@ -70,7 +89,8 @@ public class Enemy : MonoBehaviour
             //add 10 to score
             _anim.SetTrigger("OnEnemyDeath");
             _audioSource.Play();
-            Destroy(this.gameObject, 2.5f);
+            Destroy(GetComponent<Collider2D>());
+            Destroy(this.gameObject, 2.0f);
 
         }
         //method to add 10 to score!
