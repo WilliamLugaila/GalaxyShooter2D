@@ -49,7 +49,7 @@ public class UIManager : MonoBehaviour
     }
     void GameOverSequence()
     {
-        Debug.LogError("Game Over.");
+  
         //_gameManager.GameOver();
         _gameOverText.gameObject.SetActive(true);
         _restartText.gameObject.SetActive(true);

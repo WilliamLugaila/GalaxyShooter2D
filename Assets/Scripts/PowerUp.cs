@@ -10,16 +10,10 @@ public class PowerUp : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] // 0 = TripleShot
     private int powerupID;
+    [SerializeField]
+    private AudioClip _clip;
     private AudioSource _audioSource;
-   
-    void Start()
-    {
-        _audioSource = GetComponent<AudioSource>();
-        if ( _audioSource == null )
-        {
-            Debug.LogError("The audiosource is null.");
-        }
-    }
+
 
     // Update is called once per frame
     void Update()
@@ -35,7 +29,7 @@ public class PowerUp : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            _audioSource.Play();
+            AudioSource.PlayClipAtPoint(_clip, transform.position);
             Player player = other.transform.GetComponent<Player>();
             switch(powerupID)
             {
