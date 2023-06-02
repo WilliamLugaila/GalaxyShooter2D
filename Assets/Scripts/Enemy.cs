@@ -54,7 +54,7 @@ public class Enemy : MonoBehaviour
             other.transform.GetComponent<Player>().Damage();
             _anim.SetTrigger("OnEnemyDeath");
 
-            Destroy(this.gameObject, 2.8f);
+            Destroy(this.gameObject, 2.5f);
             _audioSource.Play();
         }
 
@@ -70,7 +70,7 @@ public class Enemy : MonoBehaviour
             //add 10 to score
             _anim.SetTrigger("OnEnemyDeath");
             _audioSource.Play();
-            Destroy(this.gameObject, 2.8f);
+            Destroy(this.gameObject, 2.5f);
 
         }
         //method to add 10 to score!
