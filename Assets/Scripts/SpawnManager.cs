@@ -52,7 +52,7 @@ public class SpawnManager : MonoBehaviour
     }
     public void StartSpawning()
     {
-        Debug.Log("Start Spawning");
+        //Debug.Log("Start Spawning");
         StartCoroutine(SpawnRoutine());
         StartCoroutine(SpawnPowerupRoutine());
     }

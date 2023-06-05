@@ -16,8 +16,6 @@ public class Enemy : MonoBehaviour
     private float _fireRate = 3.0f;
     private float _canFire = -1;
 
-
-
     // Start is called before the first frame update
     void Start()
     {
@@ -41,9 +39,14 @@ public class Enemy : MonoBehaviour
         {
             _fireRate = Random.Range(3f, 7f);
             _canFire = Time.time + _fireRate;
-            Instantiate(_laserPrefab, transform.position, Quaternion.identity);
-            Debug.Break();
 
+            GameObject enemyLaser = Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+            Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
+
+            for (int i = 0; i < lasers.Length; i++)
+            {
+                lasers[i].AssignEnemyLaser();
+            }
         }
 
 
@@ -88,6 +91,7 @@ public class Enemy : MonoBehaviour
             }
             //add 10 to score
             _anim.SetTrigger("OnEnemyDeath");
+            _speed = 0;
             _audioSource.Play();
             Destroy(GetComponent<Collider2D>());
             Destroy(this.gameObject, 2.0f);
