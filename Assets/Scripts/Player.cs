@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -41,6 +42,16 @@ public class Player : MonoBehaviour
     private AudioSource _audioSource;
     private float horizontalInput; // move left right
     private float verticalInput; // move up and down
+    [SerializeField]
+    private GameObject _shieldStregthGO;
+    [SerializeField]
+    private GameObject _shieldStregthTextGo;
+    private GameObject _playerShieldGO;
+    [SerializeField]
+    private int _shieldPower = 0;
+    [SerializeField]
+    private bool _ShieldsActive = false;
+
 
     void Start()
     {
@@ -63,6 +74,10 @@ public class Player : MonoBehaviour
         {
             _audioSource.clip = _LaserSoundClip;
         }
+        if (_shieldStregthGO == null)
+        {
+            Debug.Log("Player:: DoNullChecks - _shieldStreghtGO is Null");
+        }
 
     }
 
@@ -71,6 +86,7 @@ public class Player : MonoBehaviour
     {
         CalculateMovement();
         Firelaser();
+        increaseSpeed();
 
     }
     private void Firelaser()
@@ -117,8 +133,16 @@ public class Player : MonoBehaviour
     {
         if (_isShieldsActive == true)
         {
+            _shieldPower -= 1;
+            if (_shieldPower > 0)
+            {
+                _shieldStregthTextGo.GetComponent<TMP_Text>().text = _shieldPower.ToString();
+            }
+            if (_shieldPower < 0)
+            { 
             _isShieldsActive = false;
             _shieldVisualizer.SetActive(false);
+        }
             return;
         }
 
@@ -162,13 +186,47 @@ public class Player : MonoBehaviour
         
         _speed /= _speedMultiplier;
     }
-    public void ShieldsActive()
-    { _isShieldsActive = true;
-        _shieldVisualizer.SetActive(true);
-    }
+    //public void ShieldsActive()
+    //{ _isShieldsActive = true;
+    //    _shieldVisualizer.SetActive(true);
+    //}
     public void Addscore()
     {
         _score += 10;
         _uiManager.UpdateScore(_score);
     }
+
+    public void increaseSpeed()
+    {
+        Debug.Log("speed increase called");   
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.LeftShift))
+            _speed += 1f;
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+            _speed = 0f;
+        else
+            _speed = 6f;
+    }
+   
+    public void ShieldActive()
+    {
+        _isShieldsActive = true;
+        _shieldVisualizer.SetActive(true);
+        _shieldPower = 3;
+        _shieldStregthTextGo.GetComponent<TMP_Text>().text = _shieldPower.ToString();
+        _shieldStregthGO.SetActive(true);
+    }
+    public void ShieldDeactivate()
+    {
+        if (_isShieldsActive == true)
+        {
+            _isShieldsActive = false;
+            if (_playerShieldGO != null)
+            {
+                _shieldVisualizer.SetActive(false);
+
+            }
+            _shieldStregthGO.SetActive(false);
+        }
+    }
+
 }
