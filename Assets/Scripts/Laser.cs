@@ -36,7 +36,7 @@ public class Laser : MonoBehaviour
     }
     void MoveDown()
     {
-        Debug.LogError("Enemy lasers");
+        //Debug.LogError("Enemy lasers");
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
         if (transform.position.y < -8f)

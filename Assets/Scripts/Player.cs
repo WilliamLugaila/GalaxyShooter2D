@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -19,6 +21,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _TripleShotPreFab;
     [SerializeField]
+    private GameObject _HealthPreFab;
+    [SerializeField]
     private float _fireRate = 0.5f;
     private float _canFire = -1f;
     [SerializeField]
@@ -34,6 +38,16 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private int _score;
+    [SerializeField] 
+    private int _currentAmmo;
+    [SerializeField]
+    private int _maxAmmo;
+    [SerializeField] 
+    private bool _hasAmmo = true;
+    [SerializeField]
+    private TMP_Text _ammoDisplay;
+    [SerializeField]
+    private TMP_Text _Out_Of_Ammo;
 
     private UIManager _uiManager;
     [SerializeField]
@@ -51,6 +65,12 @@ public class Player : MonoBehaviour
     private int _shieldPower = 0;
     [SerializeField]
     private bool _ShieldsActive = false;
+    [SerializeField]
+    private GameObject _secondaryPreFab;
+    [SerializeField]
+    private bool _isSecondaryActive = false;
+
+
 
 
     void Start()
@@ -62,8 +82,8 @@ public class Player : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         if (_spawnManager == null)
             Debug.LogError("The Spawn Manager is Null");
-            
-
+        
+        
         if (_uiManager == null)
         {
             Debug.LogError("The UI Manager is Null");
@@ -78,37 +98,79 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Player:: DoNullChecks - _shieldStreghtGO is Null");
         }
-
+        _currentAmmo = _maxAmmo;
+        _uiManager.UpdateAmmoDisplay(_currentAmmo, _maxAmmo);
     }
 
     // Update is called once per frame
     void Update()
     {
         CalculateMovement();
+
         Firelaser();
         increaseSpeed();
 
+     
     }
     private void Firelaser()
     {
-        //if I hit space key
-        //spawn gameObject
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
         {
-       
-            _canFire = Time.time + _fireRate;
-            if (_isTripleShotActive == true)
+            if (_currentAmmo > 0)
             {
-                Instantiate(_TripleShotPreFab, transform.position, Quaternion.identity);
+                _canFire = Time.time + _fireRate;
+                _currentAmmo -= 1;
+                _uiManager.UpdateAmmoDisplay(_currentAmmo, _maxAmmo);
+                if (_isTripleShotActive == true)
+                {
+                    Instantiate(_TripleShotPreFab, transform.position, Quaternion.identity);
+                }
+                else if (_isSecondaryActive == true)
+                {
+                    //fire twinkie, wait, fire twinkie
+                    //Coroutine called
+                    Instantiate(_secondaryPreFab, transform.position, Quaternion.identity);
+                }
+                else
+                {
+                    Instantiate(_LaserPrefab, transform.position, Quaternion.identity);
+                    
+                }
+                _audioSource.Play();
+                if (_currentAmmo <= 0)
+                {
+                    _hasAmmo = false;
+                    _Out_Of_Ammo.gameObject.SetActive(true);
+                }
             }
-            else
-            {
-                Instantiate(_LaserPrefab, transform.position, Quaternion.identity);
-            }
-            _audioSource.Play();
 
         }
     }
+    public void DestroyAllEnemies()
+    {
+
+    }
+        
+
+    public void PlayerReload()
+    {
+        
+        _currentAmmo = _maxAmmo;
+        _uiManager.UpdateAmmoDisplay(_currentAmmo, _maxAmmo);
+        
+    }
+    public void PlayerHealth()
+    {
+        if (_lives < 3)
+        {
+            _lives = _lives + 1;
+            _uiManager.UpdateLives(_lives);
+        }
+
+    }
+    
+  
+
     void CalculateMovement()
     {
         horizontalInput = Input.GetAxis("Horizontal");
@@ -180,25 +242,34 @@ public class Player : MonoBehaviour
         _speed *= _speedMultiplier;
             StartCoroutine(SpeedBoostPowerDownRoutine());
         }
+    public void SecondaryActive()
+    { 
+        _isSecondaryActive = true;
+        StartCoroutine(SecondaryPowerDownRoutine());
+    }
+
+    IEnumerator SecondaryPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isSecondaryActive = false;
+    }
+   
     IEnumerator SpeedBoostPowerDownRoutine()
     {
         yield return new WaitForSeconds(5.0f);
         
         _speed /= _speedMultiplier;
     }
-    //public void ShieldsActive()
-    //{ _isShieldsActive = true;
-    //    _shieldVisualizer.SetActive(true);
-    //}
+
     public void Addscore()
     {
         _score += 10;
         _uiManager.UpdateScore(_score);
     }
 
+
     public void increaseSpeed()
     {
-        Debug.Log("speed increase called");   
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.LeftShift))
             _speed += 1f;
         else if (Input.GetKeyUp(KeyCode.LeftShift))

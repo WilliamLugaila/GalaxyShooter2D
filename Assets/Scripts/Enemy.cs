@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -95,9 +96,9 @@ public class Enemy : MonoBehaviour
             _audioSource.Play();
             Destroy(GetComponent<Collider2D>());
             Destroy(this.gameObject, 2.0f);
-
         }
-        //method to add 10 to score!
-        //communicate with UI to update the score!
+
+
     }
+
 }

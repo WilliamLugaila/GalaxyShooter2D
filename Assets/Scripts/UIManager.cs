@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,14 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text _restartText;
     private GameManager _gameManager;
+    [SerializeField]
+    private TMP_Text _ammoDisplay;
+    [SerializeField]
+    Slider _thrustSlider;
+    [SerializeField]
+    bool _canThrust = false;
+    [SerializeField]
+    float _refillThrusterSpeed = 0.1f;
 
     void Start()
     {
@@ -31,15 +40,32 @@ public class UIManager : MonoBehaviour
             
         }
     }
+    public void UpdateAmmoDisplay( int currentAmmo, int maxAmmo)
+    {
+        _ammoDisplay.text = currentAmmo + " " + maxAmmo;
+    }
     public void UpdateScore(int playerScore)
     {
         _scoreText.text = "Score: " + playerScore.ToString();
     }
     // Update is called once per frame
+    public void ThrustExhaustion()
+    {
+        if (!_canThrust) 
+            return;
+        if (_thrustSlider.value > _thrustSlider.minValue)
+            _thrustSlider.value -= 0.1f * Time.deltatTime;
+        if (_thrustSlider.value <= _thrustSlider.minValue)
+            _thrustSlider.value = _thrustSlider.minValue;
+
+    }
     public void UpdateLives(int currentLives)
     {
+        if (currentLives >= 0) 
+        {
         
         _LivesImg.sprite = _liveSprites[currentLives];
+        }
 
         if (currentLives == 0)
         {
