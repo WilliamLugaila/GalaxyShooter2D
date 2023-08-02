@@ -21,12 +21,11 @@ public class UIManager : MonoBehaviour
     private GameManager _gameManager;
     [SerializeField]
     private TMP_Text _ammoDisplay;
+    public Slider _ThrusterStatus;
     [SerializeField]
-    Slider _thrustSlider;
+    private Slider _thrusterSlider;
     [SerializeField]
-    bool _canThrust = false;
-    [SerializeField]
-    float _refillThrusterSpeed = 0.1f;
+    private Image _thrusterSliderFill;
 
     void Start()
     {
@@ -34,11 +33,35 @@ public class UIManager : MonoBehaviour
         _scoreText.text = "score:" + 0;
         _gameOverText.gameObject.SetActive(false);
         _restartText.gameObject.SetActive(false);
-       // _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
+       
         if (_gameManager == null)
         {
             
         }
+    }
+    void Update()
+    {
+        
+    }
+
+    public void UpdateThrustersSlider(float _thrustValue) // Method to update the Thursters slide.
+    {
+        if (_thrustValue >= 0 && _thrustValue <= 100)
+        {
+            _thrusterSlider.value = _thrustValue;
+        }
+    }
+    public void ThursterSliderUsableColor(bool _usableThrusters)
+    {
+        if (_usableThrusters)
+        {
+            _thrusterSliderFill.color = Color.green;
+        }
+        else if (!_usableThrusters)
+        {
+            _thrusterSliderFill.color = Color.red;
+        }
+
     }
     public void UpdateAmmoDisplay( int currentAmmo, int maxAmmo)
     {
@@ -49,16 +72,7 @@ public class UIManager : MonoBehaviour
         _scoreText.text = "Score: " + playerScore.ToString();
     }
     // Update is called once per frame
-    public void ThrustExhaustion()
-    {
-        if (!_canThrust) 
-            return;
-        if (_thrustSlider.value > _thrustSlider.minValue)
-            _thrustSlider.value -= 0.1f * Time.deltatTime;
-        if (_thrustSlider.value <= _thrustSlider.minValue)
-            _thrustSlider.value = _thrustSlider.minValue;
-
-    }
+    
     public void UpdateLives(int currentLives)
     {
         if (currentLives >= 0) 
@@ -90,11 +104,6 @@ public class UIManager : MonoBehaviour
             _gameOverText.text = "";
             yield return new WaitForSeconds(0.5f);
         }
-    }
-
-    void Update()
-    {
-        
     }
 
 }

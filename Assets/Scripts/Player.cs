@@ -1,9 +1,12 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -69,6 +72,26 @@ public class Player : MonoBehaviour
     private GameObject _secondaryPreFab;
     [SerializeField]
     private bool _isSecondaryActive = false;
+    [SerializeField]
+    private UnityEngine.UI.Slider _thrustSlider;
+    bool _canThrust = true;
+    [SerializeField]
+    float _refillThrusterSpeed = 0.1f;
+
+    [SerializeField]
+    private float _powerupThrustersWaitTimeLimit = 3.0f;
+    [SerializeField]
+    private float _thrusterChargeLevelMax = 10.0f;
+    [SerializeField]
+    private float _thrusterChargeLevel;
+    [SerializeField]
+    private float _changeDecreaseThrusterChargeBy = 1.5f;
+    [SerializeField]
+    private float _changeIncreaseThrusterChargeBy = 0.01f;
+    [SerializeField]
+    private bool _canUseThrusters = true;
+    [SerializeField]
+    private bool _thrustersInUse = false;
 
 
 
@@ -107,10 +130,10 @@ public class Player : MonoBehaviour
     {
         CalculateMovement();
 
-        Firelaser();
-        increaseSpeed();
+        EngineStatus();
 
-     
+        Firelaser();
+        
     }
     private void Firelaser()
     {
@@ -150,8 +173,23 @@ public class Player : MonoBehaviour
     {
 
     }
-        
 
+    IEnumerator ThrusterPowerReplenisRoutine()
+    {
+        yield return new WaitForSeconds(_powerupThrustersWaitTimeLimit);
+        while (_thrusterChargeLevel <= _thrusterChargeLevelMax && !_thrustersInUse)
+        {
+            yield return null;
+            _thrusterChargeLevel += Time.deltaTime * _changeIncreaseThrusterChargeBy;
+            _uiManager.UpdateThrustersSlider(_thrusterChargeLevel);
+        }
+        if (_thrusterChargeLevel >= _thrusterChargeLevelMax)
+        {
+            _thrusterChargeLevel = _thrusterChargeLevelMax;
+            _uiManager.ThursterSliderUsableColor(true);
+            _canUseThrusters = true;
+        }
+    }
     public void PlayerReload()
     {
         
@@ -190,7 +228,32 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(11.3f, transform.position.y, 0);
         }
+
+        if (Input.GetKey(KeyCode.LeftShift) && _canThrust)
+        {
+
+            transform.Translate(direction * (_speed * _speedMultiplier * Time.deltaTime));
+            //_engineHeat += Time.deltaTime * 3;
+            _thrusterChargeLevel -= Time.deltaTime * 3;
+            _uiManager.UpdateThrustersSlider(_thrusterChargeLevel);
+        }
     }
+
+
+
+    private void EngineStatus()
+    {
+
+
+        if (_thrusterChargeLevel <= 0)
+        {
+            _canThrust = false;
+            _thrusterChargeLevel = 0;
+            StartCoroutine(ThrusterPowerReplenisRoutine());
+
+        }
+    }
+
     public void Damage()
     {
         if (_isShieldsActive == true)
@@ -267,16 +330,6 @@ public class Player : MonoBehaviour
         _uiManager.UpdateScore(_score);
     }
 
-
-    public void increaseSpeed()
-    {
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.LeftShift))
-            _speed += 1f;
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
-            _speed = 0f;
-        else
-            _speed = 6f;
-    }
    
     public void ShieldActive()
     {
