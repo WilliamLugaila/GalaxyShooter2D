@@ -92,21 +92,25 @@ public class Player : MonoBehaviour
     private bool _canUseThrusters = true;
     [SerializeField]
     private bool _thrustersInUse = false;
-
-
+    private ScreenShake screenShake;
 
 
     void Start()
     {
-        // take current position = new position (0, 0, 0)
-        transform.position = new Vector3(0, 0, 0);
+
+        screenShake = Camera.main.GetComponent<ScreenShake>();
+        if (screenShake == null)
+        {
+            Debug.Log("screenshake is null");
+        }
+            // take current position = new position (0, 0, 0)
+            transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
         if (_spawnManager == null)
             Debug.LogError("The Spawn Manager is Null");
-        
-        
+
         if (_uiManager == null)
         {
             Debug.LogError("The UI Manager is Null");
@@ -133,6 +137,7 @@ public class Player : MonoBehaviour
         EngineStatus();
 
         Firelaser();
+        
         
     }
     private void Firelaser()
@@ -168,10 +173,6 @@ public class Player : MonoBehaviour
             }
 
         }
-    }
-    public void DestroyAllEnemies()
-    {
-
     }
 
     IEnumerator ThrusterPowerReplenisRoutine()
@@ -256,18 +257,19 @@ public class Player : MonoBehaviour
 
     public void Damage()
     {
+        screenShake.StartShake();     
         if (_isShieldsActive == true)
         {
-            _shieldPower -= 1;
+            
             if (_shieldPower > 0)
             {
                 _shieldStregthTextGo.GetComponent<TMP_Text>().text = _shieldPower.ToString();
             }
             if (_shieldPower < 0)
-            { 
-            _isShieldsActive = false;
-            _shieldVisualizer.SetActive(false);
-        }
+            {
+                _isShieldsActive = false;
+                _shieldVisualizer.SetActive(false);
+            }
             return;
         }
 
@@ -289,6 +291,7 @@ public class Player : MonoBehaviour
         }
 
     }
+
     public void tripleShotActive()
     { _isTripleShotActive = true;
         StartCoroutine(TripleShotPowerDownRoutine());
@@ -352,5 +355,6 @@ public class Player : MonoBehaviour
             _shieldStregthGO.SetActive(false);
         }
     }
+
 
 }
