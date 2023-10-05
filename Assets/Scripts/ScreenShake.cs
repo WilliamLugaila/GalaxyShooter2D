@@ -15,7 +15,6 @@ public class ScreenShake : MonoBehaviour
         Debug.LogError("shake");
         originalPosition = transform.position;
     }
-
     public void StartShake()
     {
         Debug.LogError("shake2");
