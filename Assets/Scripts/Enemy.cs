@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Enemy : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class Enemy : MonoBehaviour
     private float _fireRate = 3.0f;
     private float _canFire = -1;
 
+    private float _enemyStartPosition;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,7 +29,8 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogError("The Player is Null");
         }
-        
+        //_enemyStartPosition = transform.position.x;
+        EnemyMovement();
     }
 
 
@@ -49,10 +53,61 @@ public class Enemy : MonoBehaviour
                 lasers[i].AssignEnemyLaser();
             }
         }
+        EnemyMovement();
 
 
     }
 
+    void EnemyStartPosition()
+    {
+        transform.position = new Vector3(Random.Range(-11.4f, 11.4f), 7.5f, 0f);
+        _enemyStartPosition = transform.position.x;
+    }
+    void EnemyMovementDown()
+    {
+        if (transform.position.y < -8.5f)
+        {
+            EnemyStartPosition();
+        }
+    }
+
+    void EnemyMovementLeft()
+    {
+        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        transform.Translate(Vector3.left * _speed * Time.deltaTime);
+
+        if (transform.position.y < - 11.2f || transform.position.y < -8.5f)
+        {
+            EnemyStartPosition();
+        }
+    }
+
+    void EnemyMovementRight()
+    {
+        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        transform.Translate(Vector3.left * _speed * Time.deltaTime);
+
+        if (transform.position.y > -11.2f || transform.position.y < -8.5f)
+        {
+            EnemyStartPosition();
+        }
+    }
+
+    void EnemyMovement()
+    {
+        if (_enemyStartPosition <= -9.5f)
+        {
+            EnemyMovementRight();
+        }
+        else if (_enemyStartPosition >= -9.5f)
+        {
+            EnemyMovementLeft();
+        }
+        else
+        {
+            EnemyMovementDown();
+        }
+    }
     void CalculateMovement()
     {
         //Move down 4 meters per second

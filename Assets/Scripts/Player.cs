@@ -333,7 +333,13 @@ public class Player : MonoBehaviour
         _uiManager.UpdateScore(_score);
     }
 
-   
+    public void decreasescore()
+    {
+        _score = 0;
+        _uiManager.UpdateScore(_score);
+    }
+
+
     public void ShieldActive()
     {
         _isShieldsActive = true;

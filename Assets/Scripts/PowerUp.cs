@@ -42,14 +42,14 @@ public class PowerUp : MonoBehaviour
                     player.tripleShotActive();
                     break;
                 case 1:
-                    
+
                     player.SpeedBoostActive();
                     break;
                 case 2:
                     player.ShieldActive();
                     break;
                 case 3:
-                    
+
                     player.PlayerReload();
                     break;
                 case 4:
@@ -58,6 +58,9 @@ public class PowerUp : MonoBehaviour
                 case 5:
                     Debug.Log("Secondary");
                     player.SecondaryActive();
+                    break;
+                case 6:
+                    player.decreasescore();
                     break;
                 default:
                     Debug.Log("default");
