@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField]
+    
     private float _speed = 4.0f;
     [SerializeField]
     private GameObject _laserPrefab;
@@ -20,7 +21,6 @@ public class Enemy : MonoBehaviour
 
     private float _enemyStartPosition;
 
-    // Start is called before the first frame update
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -34,8 +34,6 @@ public class Enemy : MonoBehaviour
     }
 
 
-
-    // Update is called once per frame
     void Update()
     {
         CalculateMovement();
@@ -76,7 +74,7 @@ public class Enemy : MonoBehaviour
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
         transform.Translate(Vector3.left * _speed * Time.deltaTime);
 
-        if (transform.position.y < - 11.2f || transform.position.y < -8.5f)
+        if (transform.position.y < -11.2f || transform.position.y < -8.5f)
         {
             EnemyStartPosition();
         }
@@ -128,7 +126,7 @@ public class Enemy : MonoBehaviour
         Player player = other.transform.GetComponent<Player>();
         if (other.tag == "Player")
         {
-            
+
             other.transform.GetComponent<Player>().Damage();
             _anim.SetTrigger("OnEnemyDeath");
 
@@ -140,8 +138,8 @@ public class Enemy : MonoBehaviour
         {
 
             Destroy(other.gameObject);
-           
-            if(_player != null)
+
+            if (_player != null)
             {
                 _player.Addscore();
             }
